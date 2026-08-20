@@ -34,6 +34,6 @@ jobs:
         run: pnpm test
 
       # dist はコミットして配布する(git 依存の利用側にビルドさせない)。
-      # src を変えたら pnpm build して dist も一緒にコミットすること。
+      # src を変えたら pnpm compile して dist も一緒にコミットすること。
       - name: Check dist freshness
-        run: pnpm build && git diff --exit-code -- dist
+        run: pnpm compile && git diff --exit-code -- dist
