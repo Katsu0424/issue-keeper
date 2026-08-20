@@ -48,6 +48,8 @@ pnpm -s issue-keeper install-skills
 
 同梱スキル(`/note` / `/next-step` / `/plan-feature` / `/plan-bug` / `/plan-adr` / `/plan-epic`)が `.claude/skills/` にコピーされる(冪等・上書き)。コピーはコミットしてよいが**手編集しない**(配布元は issue-keeper。依存を更新したら再実行して同期する)。プラグイン配布にしないのは、プラグインスキルが必ず `/plugin:skill` 名前空間になり、素の `/note` で呼べなくなるため。
 
+スキル本文の実行形は、利用側のパッケージマネージャに合わせてコピー時に書き換えられる(`package.json` の `packageManager` フィールド > lockfile > 既定 pnpm の順で検出。npm なら `npm run -s issue-keeper --`、yarn なら `yarn issue-keeper`、bun なら `bun run issue-keeper`)。pnpm 以外のリポジトリで pnpm を実行すると node_modules が `.ignored` に退避される実害があるため、コピーされたスキルの実行形を手で pnpm に戻さないこと。
+
 **5. プロジェクト固有の `/implement` スキルを用意する**
 
 `issue-keeper` のディスパッチは Task の実装段階で `/implement` スキルを名指しする。これはブランチ規約・品質ゲート・PR 手順などリポジトリ固有の内容を含むため、プラグインには同梱していない。[docs/implement-template.md](docs/implement-template.md) を `.claude/skills/implement/SKILL.md` にコピーし、`<プレースホルダ>` を埋める。
@@ -89,3 +91,5 @@ pnpm lint && pnpm typecheck && pnpm test
 品質ゲートは [lint-gate](https://github.com/Katsu0424/lint-gate) を dogfood している。
 
 **`dist/` はコミットして配布する**(Node の type stripping は node_modules 配下で無効なため、git 依存の利用側にビルドさせない方針)。`src/` を変更したら `pnpm compile` を実行し、`dist/` も同じコミットに含めること(CI が鮮度を検証する)。
+
+`skills/` 内の実行形リテラル `pnpm -s issue-keeper` は install-skills が置換する**テンプレートマーカー**。表記を変えると書き換えが効かなくなるので、この文字列は崩さないこと。
