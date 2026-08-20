@@ -91,3 +91,5 @@ pnpm lint && pnpm typecheck && pnpm test
 ```
 
 品質ゲートは [lint-gate](https://github.com/Katsu0424/lint-gate) を dogfood している。
+
+**`dist/` はコミットして配布する**(Node の type stripping は node_modules 配下で無効なため、git 依存の利用側にビルドさせない方針)。`src/` を変更したら `pnpm build` を実行し、`dist/` も同じコミットに含めること(CI が鮮度を検証する)。

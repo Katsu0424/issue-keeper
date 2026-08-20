@@ -18,7 +18,7 @@
     "docs"
   ],
   "scripts": {
-    "prepare": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "biome check . && eslint --cache --cache-location node_modules/.cache/eslint . && lint-gate suppressions && lint-gate test-perspectives",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
