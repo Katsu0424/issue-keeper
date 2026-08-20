@@ -3,9 +3,9 @@ name: next-step
 description: issue を前進させる唯一の入口。issue-keeper inspect --dispatch が返す「次の 1 手」に従う。「issue #N を進めて」「次何する?」「着手して」で発動。
 ---
 
-# /issue-keeper:next-step — 前進の唯一の入口
+# /next-step — 前進の唯一の入口
 
-状態機械の薄いラッパー。issue の起票は `/issue-keeper:note` の仕事であり、このスキルは issue を作らない。
+状態機械の薄いラッパー。issue の起票は `/note` の仕事であり、このスキルは issue を作らない。
 
 ```bash
 pnpm -s issue-keeper inspect <n> --dispatch

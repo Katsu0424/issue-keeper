@@ -3,7 +3,7 @@ name: note
 description: 課題・アイデア・バグ報告を GitHub issue として起票する唯一の入口。会話文脈からメタデータを推定し、issue-keeper create で管理対象 issue を起票する。「issue にして」「起票して」「メモしておいて」で発動。
 ---
 
-# /issue-keeper:note — 起票の唯一の入口
+# /note — 起票の唯一の入口
 
 issue の起票はすべてこのスキルを通す。`gh issue create` や本文の手編集は使わない。
 実行コマンドはリポジトリルートで `pnpm -s issue-keeper <command>`(以下 `issue-keeper` と表記)。
@@ -13,7 +13,7 @@ issue の起票はすべてこのスキルを通す。`gh issue create` や本�
 会話文脈から以下を推定する:
 
 - **タイトルと短い説明**(両方日本語。説明は「なぜ」を捉える)
-- **Kind** — `${CLAUDE_PLUGIN_ROOT}/docs/model.md` の分類手順に従う。上から順に判定し最初に当てはまった行で確定する。「その変更が何をするか」で選び、目的では選ばない
+- **Kind** — `node_modules/issue-keeper/docs/model.md` の分類手順に従う。上から順に判定し最初に当てはまった行で確定する。「その変更が何をするか」で選び、目的では選ばない
 - **Memory** — 会話に元資料(貼り付けられた設計メモ、長い報告など)があれば verbatim で格納する。1 行メモならスキップ。**報告者には決して尋ねない**
 
 残りの確認事項は **1 回の AskUserQuestion にまとめる**:
@@ -30,7 +30,7 @@ issue の起票はすべてこのスキルを通す。`gh issue create` や本�
 PdM の声で聞く: どの画面・どの操作・どのアカウント・いつからか。
 ログ・スタックトレース・コードパス・原因仮説は**聞かない**。
 `事象`(1〜2 文)・`再現手順`(番号付き)・`期待される動作と実際の動作` の 3 節が明確になるまで追問する。
-サイジングはここでは行わない(`/issue-keeper:plan-bug` に委ねる)。
+サイジングはここでは行わない(`/plan-bug` に委ねる)。
 
 ## Step 3: 重複チェック
 
@@ -65,5 +65,5 @@ pnpm -s issue-keeper create <scratchpad>/create.json
 
 create の出力から番号と URL を報告する。Step 1 の**次のステップ**の回答に従う:
 
-- `今やる` → `/issue-keeper:next-step #<番号>` を起動して従う
-- `後でやる` → 「`/issue-keeper:next-step #<番号>` で続きを進められます」と出力して終了する
+- `今やる` → `/next-step #<番号>` を起動して従う
+- `後でやる` → 「`/next-step #<番号>` で続きを進められます」と出力して終了する

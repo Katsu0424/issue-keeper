@@ -1,9 +1,9 @@
 ---
 name: plan-epic
-description: Backlog の epic のスコープを整理し、feature の子 issue を起票して Ready に遷移させる計画ステップ。/issue-keeper:next-step のディスパッチ、または「epic #N のスコープ整理をして」で発動。
+description: Backlog の epic のスコープを整理し、feature の子 issue を起票して Ready に遷移させる計画ステップ。/next-step のディスパッチ、または「epic #N のスコープ整理をして」で発動。
 ---
 
-# /issue-keeper:plan-epic — epic: Backlog → Ready
+# /plan-epic — epic: Backlog → Ready
 
 1. `pnpm -s issue-keeper inspect <n>` で `概要` / `Memory` を読み、AskUserQuestion でスコープを確認する(対象ユーザー・主要な機能候補・やらないこと)。
 2. feature の子 issue を **JSON 配列のファイル**で起票する(Write ツールで一時ファイルに書き、インライン JSON をシェルに書かない)。`parent` = epic 番号、`kind` は省略(feature に導出される)、`description` を書き、必要なら親 Memory の該当断片を各子の `memory` に切り分けて渡す:
@@ -26,4 +26,4 @@ description: Backlog の epic のスコープを整理し、feature の子 issue
    pnpm -s issue-keeper plan-epic <n> --scope <file>
    ```
 
-4. 子の一覧を報告し、「各子は `/issue-keeper:next-step #<子番号>` で要件定義に進めます」と締める。
+4. 子の一覧を報告し、「各子は `/next-step #<子番号>` で要件定義に進めます」と締める。

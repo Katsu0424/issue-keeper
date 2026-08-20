@@ -1,5 +1,6 @@
 import { Command, CommanderError } from "commander";
 import { GhError, InvariantError, PostConditionError, UsageError } from "../errors.ts";
+import { registerInstallSkills } from "./installSkills.ts";
 import { registerPlanCommands } from "./plan.ts";
 import { registerReadCommands } from "./read.ts";
 import { contextFactory, out } from "./shared.ts";
@@ -16,6 +17,7 @@ async function main(): Promise<void> {
   registerReadCommands(program, ctx);
   registerPlanCommands(program, ctx);
   registerWriteCommands(program, ctx);
+  registerInstallSkills(program);
 
   await program.parseAsync(process.argv);
 }

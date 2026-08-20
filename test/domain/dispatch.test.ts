@@ -13,11 +13,11 @@ import { child, fields, snap } from "../helpers.ts";
 describe("dispatch(§3)", () => {
   describe("[正常系] 状態ごとの次の 1 手", () => {
     it.each<[Kind, string]>([
-      ["feature", "/issue-keeper:plan-feature"],
-      ["bug", "/issue-keeper:plan-bug"],
-      ["tooling", "/issue-keeper:plan-adr"],
-      ["refactor", "/issue-keeper:plan-adr"],
-      ["epic", "/issue-keeper:plan-epic"],
+      ["feature", "/plan-feature"],
+      ["bug", "/plan-bug"],
+      ["tooling", "/plan-adr"],
+      ["refactor", "/plan-adr"],
+      ["epic", "/plan-epic"],
     ])("Note(%s)→ %s を名指す", (kind, skill) => {
       const step = dispatch(snap({ fields: fields({ kind }) }));
       expect(step.action).toBe(`plan-${kind}`);
@@ -38,7 +38,7 @@ describe("dispatch(§3)", () => {
       expect(step.instruction).toContain("Closes #1");
     });
 
-    it("Container・Ready の子がちょうど 1 件 → その子の /issue-keeper:next-step を名指す", () => {
+    it("Container・Ready の子がちょうど 1 件 → その子の /next-step を名指す", () => {
       const step = dispatch(
         snap({
           fields: fields({ status: "ready" }),
@@ -46,7 +46,7 @@ describe("dispatch(§3)", () => {
         }),
       );
       expect(step.action).toBe("next-step-sub-issue");
-      expect(step.instruction).toContain("/issue-keeper:next-step #5");
+      expect(step.instruction).toContain("/next-step #5");
     });
   });
 
@@ -75,7 +75,7 @@ describe("dispatch(§3)", () => {
         }),
       );
       expect(step.action).toBe("error-state");
-      expect(step.instruction).toContain("/issue-keeper:next-step #子番号");
+      expect(step.instruction).toContain("/next-step #子番号");
       expect(step.instruction).toContain("#6");
     });
 

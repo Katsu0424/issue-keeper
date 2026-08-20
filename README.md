@@ -3,7 +3,7 @@
 GitHub issue 運用の状態機械 CLI + Claude Code スキル一式。
 
 - **状態の真実は GitHub 側に持つ**: Kind / Status / Priority は Projects v2 の単一選択フィールド、本文はマーカー区切りセクション。CLI の状態機械だけが書き込む(手編集禁止)
-- **スキルは会話と文章生成だけを担う**: 起票(`/issue-keeper:note`)・前進(`/issue-keeper:next-step`)・計画(`/issue-keeper:plan-*`)のスキルは薄いラッパーで、遷移の判断は `issue-keeper inspect --dispatch` が返す instruction が持つ
+- **スキルは会話と文章生成だけを担う**: 起票(`/note`)・前進(`/next-step`)・計画(`/plan-*`)のスキルは薄いラッパーで、遷移の判断は `issue-keeper inspect --dispatch` が返す instruction が持つ
 - 利用側はビルド不要(ビルド済み `dist/` をコミットして配布)。依存は commander + zod + `gh` CLI のみ
 
 データモデルは [docs/model.md](docs/model.md)、状態遷移とディスパッチ表は [docs/workflow.md](docs/workflow.md) を参照。
@@ -40,18 +40,13 @@ pnpm add -D github:Katsu0424/issue-keeper
 }
 ```
 
-**4. `.claude/settings.json` にプラグインを宣言する**(既存の設定にキーをマージする)
+**4. スキルをコピーする**
 
-```json
-{
-  "extraKnownMarketplaces": {
-    "issue-keeper": { "source": { "source": "github", "repo": "Katsu0424/issue-keeper" } }
-  },
-  "enabledPlugins": { "issue-keeper@issue-keeper": true }
-}
+```bash
+pnpm -s issue-keeper install-skills
 ```
 
-インストールの承認プロンプトは次回の Claude Code 起動時に出る(承認は人の操作)。
+同梱スキル(`/note` / `/next-step` / `/plan-feature` / `/plan-bug` / `/plan-adr` / `/plan-epic`)が `.claude/skills/` にコピーされる(冪等・上書き)。コピーはコミットしてよいが**手編集しない**(配布元は issue-keeper。依存を更新したら再実行して同期する)。プラグイン配布にしないのは、プラグインスキルが必ず `/plugin:skill` 名前空間になり、素の `/note` で呼べなくなるため。
 
 **5. プロジェクト固有の `/implement` スキルを用意する**
 
@@ -73,10 +68,11 @@ pnpm -s issue-keeper list
 **issue の書込はすべて `issue-keeper` 経由で行う。`gh issue create` / `gh issue edit` / GitHub UI での手編集で管理 issue(Projects v2 プロジェクト所属)を触らない。**
 状態 3 軸(Kind/Status/Priority)は GitHub Projects v2 のフィールド、本文はマーカー区切りセクションとして CLI の状態機械が管理しており、手編集は Malformed や rollup-drift を生む。修復も `issue-keeper set-fields` / `issue-keeper update` で行う。
 
-- 起票 → `/issue-keeper:note` スキル
-- 前進 → `/issue-keeper:next-step` スキル(`pnpm -s issue-keeper inspect <n> --dispatch` の instruction に従う)
+- 起票 → `/note` スキル
+- 前進 → `/next-step` スキル(`pnpm -s issue-keeper inspect <n> --dispatch` の instruction に従う)
 - 取り下げ・分解のやり直し → `pnpm -s issue-keeper delete <n>`(素の `gh issue close` は使わない)
-- データモデルとワークフローの詳細: issue-keeper リポジトリの `docs/model.md` / `docs/workflow.md`
+- スキル実体(note / next-step / plan-*)は issue-keeper が配布する。手編集せず、依存更新後に `pnpm -s issue-keeper install-skills` で同期する
+- データモデルとワークフローの詳細: `node_modules/issue-keeper/docs/model.md` / `docs/workflow.md`
 ```
 
 ## コマンド一覧

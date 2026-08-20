@@ -8,7 +8,7 @@
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Backlog : /issue-keeper:note(issue-keeper create)
+    [*] --> Backlog : /note(issue-keeper create)
     Backlog --> Ready : /plan-*(計画コマンド)
     Ready --> InProgress : issue-keeper start
     InProgress --> Done : PR の Closes #N でマージ
@@ -27,25 +27,25 @@ issue の workUnit と Status から「次の 1 手」を決定して返す。`i
 
 | 状態 | action | 次の 1 手 |
 |---|---|---|
-| Note(Backlog) | `plan-<kind>` | Kind ごとの計画スキル(`/issue-keeper:plan-feature`=要件定義 / `/issue-keeper:plan-bug`=原因調査 / `/issue-keeper:plan-adr`=ADR 作成 / `/issue-keeper:plan-epic`=スコープ整理) |
+| Note(Backlog) | `plan-<kind>` | Kind ごとの計画スキル(`/plan-feature`=要件定義 / `/plan-bug`=原因調査 / `/plan-adr`=ADR 作成 / `/plan-epic`=スコープ整理) |
 | Task(Ready) | `start-task` | `issue-keeper start N` |
 | Task(In Progress) | `task-in-progress` | `/implement` で実装を進め、PR の `Closes #N` で閉じる(終端) |
 | Task / Container(Done) | `done` | 完了。追加作業は新しい issue へ(終端) |
-| Container・Ready の子がちょうど 1 件 | `next-step-sub-issue` | `/issue-keeper:next-step #子` |
-| Container・Ready の子が複数 | `next-step-sub-issue` | どれを進めるか人に確認して `/issue-keeper:next-step` を再実行 |
-| Container・Ready の子が 0 件 | `error-state` | Backlog の子は `/issue-keeper:next-step #子`、In Progress の子は作業続行 |
+| Container・Ready の子がちょうど 1 件 | `next-step-sub-issue` | `/next-step #子` |
+| Container・Ready の子が複数 | `next-step-sub-issue` | どれを進めるか人に確認して `/next-step` を再実行 |
+| Container・Ready の子が 0 件 | `error-state` | Backlog の子は `/next-step #子`、In Progress の子は作業続行 |
 | Malformed | `error-state` | 欠陥の列挙と `issue-keeper set-fields` の具体例 |
 
 ## スキル構成
 
 | スキル | 役割 |
 |---|---|
-| `/issue-keeper:note` | 起票の唯一の入口。メタデータ推定 → (bug は intake 聞き切り)→ 重複チェック → `create` → 報告 |
-| `/issue-keeper:next-step` | 前進の唯一の入口。`inspect --dispatch` の instruction にそのまま従う |
-| `/issue-keeper:plan-feature` | 要件・受け入れ条件・SP を書いて Ready へ |
-| `/issue-keeper:plan-bug` | 根本原因を調査し 原因調査・SP を書いて Ready へ |
-| `/issue-keeper:plan-adr` | 決定(+検討した選択肢)・SP を書いて Ready へ(tooling / refactor) |
-| `/issue-keeper:plan-epic` | feature の子を起票し スコープ を書いて Ready へ |
+| `/note` | 起票の唯一の入口。メタデータ推定 → (bug は intake 聞き切り)→ 重複チェック → `create` → 報告 |
+| `/next-step` | 前進の唯一の入口。`inspect --dispatch` の instruction にそのまま従う |
+| `/plan-feature` | 要件・受け入れ条件・SP を書いて Ready へ |
+| `/plan-bug` | 根本原因を調査し 原因調査・SP を書いて Ready へ |
+| `/plan-adr` | 決定(+検討した選択肢)・SP を書いて Ready へ(tooling / refactor) |
+| `/plan-epic` | feature の子を起票し スコープ を書いて Ready へ |
 | `/implement` | Ready / In Progress の Task を実装し、`Closes #N` 付き PR まで運ぶ |
 
 ## コマンド一覧

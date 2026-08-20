@@ -494,7 +494,7 @@ describe("受け入れシナリオ §6.1: feature チェーン", () => {
     const n = f!.number;
 
     let step = dispatch(await repo.getSnapshot(n));
-    expect(step.instruction).toContain("/issue-keeper:plan-feature");
+    expect(step.instruction).toContain("/plan-feature");
 
     await planFeature(repo, cfg, n, { requirements: "r", acceptance: "a", sp: 2 });
     step = dispatch(await repo.getSnapshot(n));

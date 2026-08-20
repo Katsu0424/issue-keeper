@@ -1,5 +1,6 @@
 import { Command, CommanderError } from "commander";
 import { GhError, InvariantError, PostConditionError, UsageError } from "../errors.js";
+import { registerInstallSkills } from "./installSkills.js";
 import { registerPlanCommands } from "./plan.js";
 import { registerReadCommands } from "./read.js";
 import { contextFactory, out } from "./shared.js";
@@ -14,6 +15,7 @@ async function main() {
     registerReadCommands(program, ctx);
     registerPlanCommands(program, ctx);
     registerWriteCommands(program, ctx);
+    registerInstallSkills(program);
     await program.parseAsync(process.argv);
 }
 function handleError(e) {
