@@ -1,0 +1,6 @@
+{
+  "name": "issue-keeper",
+  "description": "issue 運用の状態機械 CLI(issue-keeper)を駆動するスキル一式: 起票(note)/ 前進(next-step)/ 計画(plan-feature / plan-bug / plan-adr / plan-epic)",
+  "version": "0.1.0",
+  "author": { "name": "Katsu0424" }
+}

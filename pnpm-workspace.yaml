@@ -1,0 +1,4 @@
+allowBuilds:
+  esbuild: true
+# サプライチェーン対策: 公開から 7 日未満のパッケージ版は解決しない
+minimumReleaseAge: 10080

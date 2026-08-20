@@ -1,0 +1,39 @@
+{
+  "name": "issue-keeper",
+  "version": "0.1.0",
+  "description": "GitHub issue 運用の状態機械 CLI + Claude Code スキル一式。Projects v2 の 3 軸(Kind/Status/Priority)とマーカー区切りセクションで issue を管理し、次の 1 手をディスパッチする",
+  "type": "module",
+  "license": "MIT",
+  "repository": "github:Katsu0424/issue-keeper",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "bin": {
+    "issue-keeper": "./bin/issue-keeper.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs"
+  ],
+  "scripts": {
+    "lint": "biome check . && eslint --cache --cache-location node_modules/.cache/eslint . && lint-gate suppressions && lint-gate test-perspectives",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "commander": "^14.0.2",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.1",
+    "@types/node": "^22.18.13",
+    "eslint": "^9.39.1",
+    "eslint-plugin-sonarjs": "^4.2.0",
+    "lint-gate": "github:Katsu0424/lint-gate",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vitest": "^3.2.4"
+  }
+}
