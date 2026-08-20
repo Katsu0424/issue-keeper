@@ -1,3 +1,4 @@
 #!/usr/bin/env node
-// Node 22.18+ のネイティブ type stripping で TS を直接実行する(ビルド不要)
-await import("../src/cli/index.ts");
+// dist は prepare(tsc -p tsconfig.build.json)が生成する。
+// node_modules 配下では Node の type stripping が無効なため、TS 直実行ではなくビルド済み JS を使う。
+await import("../dist/cli/index.js");
