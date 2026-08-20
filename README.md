@@ -4,7 +4,7 @@ GitHub issue 運用の状態機械 CLI + Claude Code スキル一式。
 
 - **状態の真実は GitHub 側に持つ**: Kind / Status / Priority は Projects v2 の単一選択フィールド、本文はマーカー区切りセクション。CLI の状態機械だけが書き込む(手編集禁止)
 - **スキルは会話と文章生成だけを担う**: 起票(`/issue-keeper:note`)・前進(`/issue-keeper:next-step`)・計画(`/issue-keeper:plan-*`)のスキルは薄いラッパーで、遷移の判断は `issue-keeper inspect --dispatch` が返す instruction が持つ
-- ビルド不要(Node 22.18+ のネイティブ type stripping)。依存は commander + zod + `gh` CLI のみ
+- 利用側はビルド不要(ビルド済み `dist/` をコミットして配布)。依存は commander + zod + `gh` CLI のみ
 
 データモデルは [docs/model.md](docs/model.md)、状態遷移とディスパッチ表は [docs/workflow.md](docs/workflow.md) を参照。
 
