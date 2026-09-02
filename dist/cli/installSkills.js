@@ -12,13 +12,15 @@ import { out } from "./shared.js";
  * コピー時に利用側のパッケージマネージャに合わせて書き換える。pnpm 以外の
  * リポジトリで pnpm を実行すると node_modules が .ignored に退避される実害があるため。
  */
-const RUN_MARKER = "pnpm -s issue-keeper";
+/** 対応するパッケージマネージャ → スキル本文に書く実行形 */
 const RUNNERS = {
     pnpm: "pnpm -s issue-keeper",
     npm: "npm run -s issue-keeper --",
     yarn: "yarn issue-keeper",
     bun: "bun run issue-keeper",
 };
+/** skills/ の原本は pnpm 形で書かれている。この文字列を置換対象のマーカーとして扱う */
+const RUN_MARKER = RUNNERS.pnpm;
 const LOCKFILES = [
     ["pnpm-lock.yaml", "pnpm"],
     ["package-lock.json", "npm"],
@@ -26,6 +28,7 @@ const LOCKFILES = [
     ["bun.lock", "bun"],
     ["bun.lockb", "bun"],
 ];
+const isRunner = (v) => typeof v === "string" && v in RUNNERS;
 export function installSkills(destRoot, srcDir = defaultSrcDir()) {
     if (!existsSync(srcDir)) {
         throw new UsageError(`スキルの配布元が見つかりません: ${srcDir}`);
@@ -37,7 +40,7 @@ export function installSkills(destRoot, srcDir = defaultSrcDir()) {
         .map((e) => e.name)
         .sort();
     for (const name of names) {
-        copySkill(join(srcDir, name), join(dest, name), RUNNERS[runner] ?? RUNNERS.pnpm ?? "");
+        copySkill(join(srcDir, name), join(dest, name), RUNNERS[runner]);
     }
     return { installed: names, runner };
 }
@@ -67,7 +70,7 @@ function declaredPackageManager(destRoot) {
     catch {
         return null;
     }
-    return typeof name === "string" && name in RUNNERS ? name : null;
+    return isRunner(name) ? name : null;
 }
 function copySkill(srcDir, destDir, runCommand) {
     for (const entry of readdirSync(srcDir, { withFileTypes: true, recursive: true })) {

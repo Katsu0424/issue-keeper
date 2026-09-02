@@ -67,8 +67,10 @@ issue の workUnit と Status から「次の 1 手」を決定して返す。`i
 |---|---|
 | 0 | 成功 |
 | 1 | ネットワーク・GitHub・認証の失敗 |
-| 2 | 使い方の誤り、または dispatch の error-state |
+| 2 | 使い方の誤り(引数・フラグの不正、前提を満たさない issue への実行) |
 | 3 | `inspect --validate` の不変条件違反(計画ガードの拒否を含む) |
 | 4 | 事後条件違反。最終行に `{"error":"post-condition-failed","expected":...,"actual":...}`。復旧は `set-fields` |
+
+`inspect --dispatch` の `error-state`(Malformed・着手可能な子なし)は終了コードではなく `nextStep.action` で表す(終了コードは 0)。スキルは他の action と同じく `instruction` に従えばよい。
 
 フィールド書換と本文書換は GitHub API 上アトミックにできない。各遷移コマンドは本文 → フィールドの順に書き、書込後に再分類して約束と照合し、不一致なら exit 4 とする。

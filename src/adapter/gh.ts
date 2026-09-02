@@ -11,6 +11,9 @@ import { axisFieldsFromOptionNames, ensureProjectIds, type ProjectIds } from "./
 
 const execFileAsync = promisify(execFile);
 
+/** list の取得上限ページ数(1 ページ 100 件)。open な管理対象がこれを超える運用は想定しない */
+const MAX_LIST_PAGES = 5;
+
 /** 単一選択のフィールド値だけを読む(他の型の値は空オブジェクトになり無視される) */
 const FIELD_VALUES = `
 fieldValues(first: 20) {
@@ -233,7 +236,7 @@ export class GhRepository implements Repository {
     const p = await this.project();
     const rows: ListedIssue[] = [];
     let after: string | null = null;
-    for (let page = 0; page < 5; page++) {
+    for (let page = 0; page < MAX_LIST_PAGES; page++) {
       const data = (await this.graphql(ITEMS_QUERY, {
         id: p.projectId,
         ...(after !== null ? { after } : {}),

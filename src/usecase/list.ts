@@ -1,4 +1,4 @@
-import type { Kind, OpenStatus } from "../domain/schema.ts";
+import type { Kind, OpenStatus, Priority } from "../domain/schema.ts";
 import type { Repository } from "../ports.ts";
 
 export interface ListRow {
@@ -6,7 +6,7 @@ export interface ListRow {
   title: string;
   kind: Kind | null;
   status: OpenStatus | null;
-  priority: string | null;
+  priority: Priority | null;
   url: string;
 }
 

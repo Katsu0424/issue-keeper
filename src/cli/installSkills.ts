@@ -15,16 +15,20 @@ import { out } from "./shared.ts";
  * リポジトリで pnpm を実行すると node_modules が .ignored に退避される実害があるため。
  */
 
-const RUN_MARKER = "pnpm -s issue-keeper";
-
-const RUNNERS: Record<string, string> = {
+/** 対応するパッケージマネージャ → スキル本文に書く実行形 */
+const RUNNERS = {
   pnpm: "pnpm -s issue-keeper",
   npm: "npm run -s issue-keeper --",
   yarn: "yarn issue-keeper",
   bun: "bun run issue-keeper",
-};
+} as const;
 
-const LOCKFILES: [string, string][] = [
+export type Runner = keyof typeof RUNNERS;
+
+/** skills/ の原本は pnpm 形で書かれている。この文字列を置換対象のマーカーとして扱う */
+const RUN_MARKER = RUNNERS.pnpm;
+
+const LOCKFILES: ReadonlyArray<[string, Runner]> = [
   ["pnpm-lock.yaml", "pnpm"],
   ["package-lock.json", "npm"],
   ["yarn.lock", "yarn"],
@@ -32,9 +36,11 @@ const LOCKFILES: [string, string][] = [
   ["bun.lockb", "bun"],
 ];
 
+const isRunner = (v: unknown): v is Runner => typeof v === "string" && v in RUNNERS;
+
 export interface InstallResult {
   installed: string[];
-  runner: string;
+  runner: Runner;
 }
 
 export function installSkills(destRoot: string, srcDir: string = defaultSrcDir()): InstallResult {
@@ -48,13 +54,13 @@ export function installSkills(destRoot: string, srcDir: string = defaultSrcDir()
     .map((e) => e.name)
     .sort();
   for (const name of names) {
-    copySkill(join(srcDir, name), join(dest, name), RUNNERS[runner] ?? RUNNERS.pnpm ?? "");
+    copySkill(join(srcDir, name), join(dest, name), RUNNERS[runner]);
   }
   return { installed: names, runner };
 }
 
 /** packageManager フィールド > lockfile > 既定 pnpm の順で利用側のパッケージマネージャを検出する */
-export function detectRunner(destRoot: string): string {
+export function detectRunner(destRoot: string): Runner {
   const declared = declaredPackageManager(destRoot);
   if (declared !== null) return declared;
   for (const [file, runner] of LOCKFILES) {
@@ -63,7 +69,7 @@ export function detectRunner(destRoot: string): string {
   return "pnpm";
 }
 
-function declaredPackageManager(destRoot: string): string | null {
+function declaredPackageManager(destRoot: string): Runner | null {
   let raw: string;
   try {
     raw = readFileSync(join(destRoot, "package.json"), "utf8");
@@ -76,7 +82,7 @@ function declaredPackageManager(destRoot: string): string | null {
   } catch {
     return null;
   }
-  return typeof name === "string" && name in RUNNERS ? name : null;
+  return isRunner(name) ? name : null;
 }
 
 function copySkill(srcDir: string, destDir: string, runCommand: string): void {
