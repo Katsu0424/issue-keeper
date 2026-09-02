@@ -7,6 +7,7 @@
 */
 import { describe, expect, it } from "vitest";
 import { dispatch } from "../../src/domain/dispatch.ts";
+import { SEC } from "../../src/domain/schema.ts";
 import { statusOf } from "../../src/domain/types.ts";
 import { InvariantError, PostConditionError, UsageError } from "../../src/errors.ts";
 import { createIssues } from "../../src/usecase/create.ts";
@@ -36,7 +37,7 @@ describe("create(§2.2)", () => {
     );
     const s = await repo.getSnapshot(created!.number);
     expect(s.fields).toEqual(axes("feature", "backlog", "p1"));
-    expect(s.sections["概要"]).toBe("検索が遅い");
+    expect(s.sections[SEC.overview]).toBe("検索が遅い");
     expect(repo.projectEnsured).toBe(true);
   });
 
@@ -60,7 +61,7 @@ describe("create(§2.2)", () => {
     await expect(createIssues(repo, cfg, "\n\n")).rejects.toThrow(UsageError);
   });
 
-  it("[正常系] 整形済み JSON オブジェクト(複数行)1 件で起票できる(#58 ファイル入力の既定形)", async () => {
+  it("[正常系] 整形済み JSON オブジェクト(複数行)1 件で起票できる(ファイル入力の既定形)", async () => {
     const repo = new FakeRepository();
     const pretty = JSON.stringify(
       { title: "整形入力", kind: "feature", overview: "ファイルから起票" },
@@ -70,7 +71,7 @@ describe("create(§2.2)", () => {
     const [created] = await createIssues(repo, cfg, pretty);
     const s = await repo.getSnapshot(created!.number);
     expect(s.fields).toEqual(axes("feature", "backlog", "p2"));
-    expect(s.sections["概要"]).toBe("ファイルから起票");
+    expect(s.sections[SEC.overview]).toBe("ファイルから起票");
   });
 
   it("[正常系] JSON 配列で複数件を起票できる", async () => {
@@ -126,8 +127,8 @@ describe("create(§2.2)", () => {
     );
     const sa = await repo.getSnapshot(c1!.number);
     expect(sa.fields).toEqual(axes("feature", "ready", "p1"));
-    expect(sa.sections["内容"]).toBe("Aをやる");
-    expect(sa.sections["見積もり"]).toBe("SP: 3");
+    expect(sa.sections[SEC.description]).toBe("Aをやる");
+    expect(sa.sections[SEC.estimate]).toBe("SP: 3");
     const sb = await repo.getSnapshot(c2!.number);
     expect(sb.fields.status).toBe("backlog");
     const parent = await repo.getSnapshot(epic!.number);
@@ -170,7 +171,7 @@ describe("create(§2.2)", () => {
       ),
     );
     const s = await repo.getSnapshot(epic!.number);
-    expect(s.sections["見積もり"]).toBe("SP: 8");
+    expect(s.sections[SEC.estimate]).toBe("SP: 8");
     expect(s.fields.status).toBe("backlog");
   });
 });
@@ -196,11 +197,11 @@ describe("計画コマンド(§2.5)", () => {
     await planFeature(repo, cfg, n, { requirements: "要件文", acceptance: "条件文", sp: 3 });
     const s = await repo.getSnapshot(n);
     expect(s.fields.status).toBe("ready");
-    expect(s.sections["要件"]).toBe("要件文");
-    expect(s.sections["受け入れ条件"]).toBe("条件文");
-    expect(s.sections["見積もり"]).toBe("SP: 3");
-    expect(s.sections["Memory"]).toBeUndefined();
-    expect(s.sections["概要"]).toBe("概要文"); // preserve-on-omit
+    expect(s.sections[SEC.requirements]).toBe("要件文");
+    expect(s.sections[SEC.acceptance]).toBe("条件文");
+    expect(s.sections[SEC.estimate]).toBe("SP: 3");
+    expect(s.sections[SEC.memory]).toBeUndefined();
+    expect(s.sections[SEC.overview]).toBe("概要文"); // preserve-on-omit
     expect(dispatch(s).action).toBe("start-task");
   });
 
@@ -368,12 +369,12 @@ describe("update(§2.6)", () => {
       memory: "また残った",
     });
     let s = await repo.getSnapshot(n!.number);
-    expect(s.sections["Memory"]).toBe("また残った");
+    expect(s.sections[SEC.memory]).toBe("また残った");
     // 必須が全部埋まる書込 → Memory 吸収
     await updateIssue(repo, cfg, { kind: "feature", number: n!.number, sections: { 要件: "r2" } });
     s = await repo.getSnapshot(n!.number);
-    expect(s.sections["Memory"]).toBeUndefined();
-    expect(s.sections["要件"]).toBe("r2");
+    expect(s.sections[SEC.memory]).toBeUndefined();
+    expect(s.sections[SEC.requirements]).toBe("r2");
   });
 
   it("同じ呼び出しで --memory が渡されたときは残す", async () => {
@@ -391,7 +392,7 @@ describe("update(§2.6)", () => {
       memory: "意図して残す",
     });
     const s = await repo.getSnapshot(n!.number);
-    expect(s.sections["Memory"]).toBe("意図して残す");
+    expect(s.sections[SEC.memory]).toBe("意図して残す");
   });
 
   it("Container の intake セクション書換は拒否", async () => {
@@ -455,7 +456,7 @@ describe("set-fields(§2.8)/ delete(§2.9)/ list(§2.4)", () => {
     await deleteIssue(repo, cfg, c2!.number);
     const epicSnap = await repo.getSnapshot(epic!.number);
     expect(epicSnap.children.map((c) => c.number)).toEqual([c1!.number]);
-    expect(epicSnap.sections["見積もり"]).toBe("SP: 3");
+    expect(epicSnap.sections[SEC.estimate]).toBe("SP: 3");
     // 冪等 [エッジ]
     await expect(deleteIssue(repo, cfg, c2!.number)).resolves.toMatchObject({ deleted: true });
   });

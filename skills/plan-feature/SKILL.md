@@ -14,10 +14,18 @@ description: Backlog の feature に要件定義を書き込んで Ready に遷�
    pnpm -s issue-keeper plan-feature <n> --requirements <file> --acceptance <file> --sp <N>
    ```
 
-5. 大きい場合は `issue-keeper create` の parent 行で子 Task に分解してよい(各子に `description` と `sp`):
+5. 大きい場合は `issue-keeper create` の parent 行で子 Task に分解してよい(各子に `description` と `sp`)。`/note` と同様に JSON を一時ファイルに書いて渡し、インライン JSON をシェルに書かない:
+
+   ```json
+   // <scratchpad>/feature-<n>-children.json
+   [
+     { "title": "子A", "parent": <n>, "description": "...", "sp": 2 },
+     { "title": "子B", "parent": <n>, "description": "...", "sp": 3 }
+   ]
+   ```
 
    ```bash
-   echo '{"title":"...","parent":<n>,"description":"...","sp":2}' | pnpm -s issue-keeper create
+   pnpm -s issue-keeper create <scratchpad>/feature-<n>-children.json
    ```
 
 6. 番号・URL と書いた内容の要約を報告し、「`/next-step #<n>` で着手できます」と締める。

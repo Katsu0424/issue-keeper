@@ -73,7 +73,7 @@ function jsonlEntries(trimmed) {
 /**
  * 入力全体をまず JSON として解釈し(オブジェクト = 1 件 / 配列 = N 件)、
  * 解釈できなければ後方互換の JSONL(1 行 = 1 issue)として読む。
- * ファイル入力の既定形は整形済み JSON(#58: シェル quoting を経由させない)。
+ * ファイル入力の既定形は整形済み JSON(インライン JSON をシェル quoting に通さないため)。
  */
 function toRawEntries(raw) {
     const trimmed = raw.trim();
